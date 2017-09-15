@@ -37,8 +37,8 @@ private:
     double x;
     double y;
     const double K = 8.987552e9;
-    int SceneToGridX(QPointF);
-    int SceneToGridY(QPointF);
+    double SceneToGridX(QPointF);
+    double SceneToGridY(QPointF);
     QGraphicsItem *item;
 };
 

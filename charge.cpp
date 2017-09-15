@@ -24,7 +24,7 @@ void Charge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(color);
-    painter->drawEllipse(-17, -17, 34, 34);
+    painter->drawEllipse(-15, -15, 30, 30);
 
     painter->setBrush(Qt::white);
     painter->setPen(QPen(Qt::white, 3));
@@ -45,7 +45,7 @@ void Charge::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse move charge: " << event->scenePos();
+    //qDebug() << "Mouse move charge: " << event->scenePos();
     if(QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
             .length() < QApplication::startDragDistance())
     {
@@ -60,7 +60,6 @@ void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         mime->setColorData(color);
         mime->setProperty("Q", this->Q);
-        mime->setProperty("isConstructor", this->isConstructor);
 
         QPixmap pixmap(34, 34);
         pixmap.fill(Qt::transparent);
@@ -83,7 +82,7 @@ void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void Charge::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << "Mouse release: " << event->scenePos();
+    //qDebug() << "Mouse release: " << event->scenePos();
     setCursor(Qt::OpenHandCursor);
 }
 

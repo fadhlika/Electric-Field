@@ -14,8 +14,8 @@ void ElectricField::InitializeField()
     this->NGridY = mainScreenSize.height() / GridW;
     qDebug() << "Number of grid: " << NGridX << this->NGridY;
 
-    for(double x=20; x < mainScreenSize.width(); x += GridW){
-        for(double y=20; y < mainScreenSize.height() - 25; y += GridW){
+    for(double x=20; x < mainScreenSize.width() - GridW; x += GridW){
+        for(double y=20; y < mainScreenSize.height() - GridW; y += GridW){
             Arrow *arrow = new Arrow;
             arrow->setPos(x, y);
             this->addItem(arrow);
@@ -24,8 +24,7 @@ void ElectricField::InitializeField()
 
     foreach (QGraphicsItem *c, this->items()) {
         if(c->type() == ArrowField) {
-            c->setTransformOriginPoint(0, 8);
-            c->setScale(0.8);
+            c->setTransformOriginPoint(0, 0);
             c->hide();
         }
     }
@@ -33,21 +32,21 @@ void ElectricField::InitializeField()
 
 void ElectricField::CalculateField()
 {
-    qDebug() << "Clear vector";
+    //qDebug() << "Clear vector";
 
     double Ex[NGridX][NGridY];
     double Ey[NGridX][NGridY];
-    //double E[NGridX][NGridY];
+    double E[NGridX][NGridY];
 
     for(int i=0; i < NGridX; i++){
         for(int j=0; j <= NGridY; j++){
             Ex[i][j] = 0;
             Ey[i][j] = 0;
-            //E[i][j] = 0;
+            E[i][j] = 0;
         }
     }
 
-    qDebug() << "Calculate Ex and Ey";
+    //qDebug() << "Calculate Ex and Ey";
     for(int i=0; i < NGridX; i++){
         for(int j=0; j < NGridY; j++){
             foreach (QGraphicsItem *item, this->items()) {
@@ -64,8 +63,8 @@ void ElectricField::CalculateField()
             }
         }
     }
-    /*
-    qDebug() << "Calculate E";
+
+    //qDebug() << "Calculate E";
     for(int i=0; i < NGridX; i++){
         for(int j=0; j < NGridY; j++){
             E[i][j] = std::sqrt(Ex[i][j]*Ex[i][j] + Ey[i][j]*Ey[i][j]);
@@ -73,26 +72,27 @@ void ElectricField::CalculateField()
     }
 
 
-    qDebug() << "Set E saturation";
+    //qDebug() << "Set E saturation";
     double Qmax = 0;
-    for(Charge *c: charges){
-        if(Qmax < std::fabs(c->Q))
-            Qmax = std::fabs(c->Q);
+    foreach (QGraphicsItem *item, this->items()) {
+        if(item->type() == ChargeNormal) {
+            Charge *c = qgraphicsitem_cast<Charge*>(item);
+            if(c != 0) {
+                if(Qmax < std::fabs(c->Q))
+                    Qmax = std::fabs(c->Q);
+            }
+        }
     }
 
-    double Esat = K * Qmax / (0.05*0.05);
+    double Esat = K * Qmax / (1.5*1.5);
     for(int i=0; i < NGridX; i++){
         for(int j=0; j < NGridY; j++){
             if(E[i][j] > Esat) E[i][j] = Esat;
+            else if(E[i][j] < -Esat) E[i][j] = -Esat;
         }
     }
-    for(int i=0; i < NGridX; i++){
-        for(int j=0; j < NGridY; j++){
-            if(E[i][j] < -Esat) E[i][j] = -Esat;
-        }
-    }*/
 
-    qDebug() << "Rotate arrow" ;
+    //qDebug() << "Rotate arrow" ;
     for(int i=0; i < NGridX; i++){
         double x = (i*GridW);
         for(int j=0; j < NGridY; j++){
@@ -102,24 +102,30 @@ void ElectricField::CalculateField()
             if(tetha < 0) tetha += 360;
             foreach (QGraphicsItem *item, this->items(QRectF(x, y, GridW, GridW))) {
                 if(item->type() == ArrowField){
-                    item->setRotation(tetha);
-                    qDebug() << "Grid" << i << j << tetha;
+                    Arrow *arrow = qgraphicsitem_cast<Arrow*>(item);
+                    arrow->setRotation(tetha);
+
+                    QColor color(Qt::white);
+                    double alpha = E[i][j]/Esat;
+
+                    color.setAlphaF(alpha);
+                    arrow->setColor(color);
                 }
             }
         }
     }
 
-    qDebug() << "Calculate done";
+    //qDebug() << "Calculate done";
 }
 
-int ElectricField::SceneToGridX(QPointF pos)
+double ElectricField::SceneToGridX(QPointF pos)
 {
-    return pos.x()/GridW;
+    return (pos.x()-20)/GridW;
 }
 
-int ElectricField::SceneToGridY(QPointF pos)
+double ElectricField::SceneToGridY(QPointF pos)
 {
-    return pos.y()/GridW;
+    return (pos.y()-20)/GridW;
 }
 
 void ElectricField::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
@@ -130,7 +136,8 @@ void ElectricField::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 
 void ElectricField::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    Q_UNUSED(event);
+    //Q_UNUSED(event);
+    QGraphicsScene::dragLeaveEvent(event);
     //qDebug() << "Drag leave" << event->scenePos();
     update();
 }
@@ -143,25 +150,22 @@ void ElectricField::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void ElectricField::dropEvent(QGraphicsSceneDragDropEvent *event){
     //qDebug() << "Drop: " << event->scenePos();
+    QGraphicsScene::dropEvent(event);
 
     double Q = qvariant_cast<double>(event->mimeData()->property("Q"));
-    bool isConstructor = qvariant_cast<bool>(event->mimeData()->property("isConstructor"));
 
-    if(isConstructor){
-        Charge *charge = new Charge;
-        charge->Q = Q;
-        charge->setPos(event->scenePos());
-        charge->isConstructor = false;
-        charge->setZValue(10);
+    Charge *charge = new Charge;
+    charge->Q = Q;
+    charge->setPos(event->scenePos());
+    charge->setZValue(10);
 
-        this->addItem(charge);
-        foreach (QGraphicsItem *c, this->items()) {
-            if(c->type() == ArrowField) {
-                c->show();
-            }
+    this->addItem(charge);
+    foreach (QGraphicsItem *c, this->items()) {
+        if(c->type() == ArrowField) {
+            if(!c->isVisible()) c->show();
         }
-        this->CalculateField();
     }
+    this->CalculateField();
 
 }
 
@@ -198,8 +202,8 @@ void ElectricField::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void ElectricField::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseMoveEvent(event);
-    qDebug() << "Grid: " << SceneToGridX(event->scenePos())
-             << SceneToGridY(event->scenePos()) << event->scenePos();
+    //qDebug() << "Grid: " << SceneToGridX(event->scenePos())
+    //         << SceneToGridY(event->scenePos()) << event->scenePos();
 
     Charge *charge = qgraphicsitem_cast<Charge*>(this->mouseGrabberItem());
     if(charge != 0){
@@ -210,6 +214,6 @@ void ElectricField::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void ElectricField::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsScene::mousePressEvent(event);
+    QGraphicsScene::mouseReleaseEvent(event);
 
 }

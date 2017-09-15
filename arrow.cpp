@@ -2,12 +2,12 @@
 
 Arrow::Arrow()
 {
-    direction = 0.0;
+    color = Qt::white;
 }
 
 QRectF Arrow::boundingRect() const
 {
-    return QRectF(-10, -15, 20, 30);
+    return QRectF(-7.5, -20, 15, 40);
 }
 void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
@@ -15,18 +15,24 @@ void Arrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     Q_UNUSED(widget);
 
     QPainterPath path;
-    path.moveTo(0, -10);
-    path.lineTo(10, 0);
-    path.lineTo(5, 0);
-    path.lineTo(5, 30);
-    path.lineTo(-5, 30);
-    path.lineTo(-5, 0);
-    path.lineTo(-10, 0);
+    path.moveTo(0, -20);
+    path.lineTo(7.5, -5);
+    path.lineTo(3, -5);
+    path.lineTo(3, 20);
+    path.lineTo(-3, 20);
+    path.lineTo(-3, -5);
+    path.lineTo(-7.5, -5);
     path.closeSubpath();
 
-    painter->setPen(Qt::white);
-    painter->setBrush(Qt::white);
+    painter->setPen(color);
+    painter->setBrush(color);
     painter->drawPath(path);
+}
+
+void Arrow::setColor(QColor color_)
+{
+    color = color_;
+    this->update();
 }
 
 int Arrow::type() const

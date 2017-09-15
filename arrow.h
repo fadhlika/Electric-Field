@@ -16,6 +16,7 @@
 #include <QPainterPath>
 #include <QtMath>
 #include <vector>
+#include <QColor>
 
 class Arrow : public QGraphicsItem
 {
@@ -24,11 +25,12 @@ public:
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
+    void setColor(QColor color_);
 
     int type() const;
 
 private:
-    double direction;
+    QColor color;
 };
 
 #endif // ARROW_H

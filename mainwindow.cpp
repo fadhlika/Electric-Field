@@ -50,8 +50,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
    double w = (this->width()/2);
    double h = this->height();
 
-   charge1->setPos(w - 30, h - 60);
-   charge2->setPos(w + 30, h - 60);
+   charge1->setPos(w - 50, h - 60);
+   charge2->setPos(w + 50, h - 60);
    control->setPos(w, h);
 
    qDebug() << "Control pos" << control->boundingRect();
