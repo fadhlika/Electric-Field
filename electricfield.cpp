@@ -34,15 +34,16 @@ void ElectricField::CalculateField()
 {
     //qDebug() << "Clear vector";
 
-    double Ex[NGridX][NGridY];
-    double Ey[NGridX][NGridY];
-    double E[NGridX][NGridY];
+    double *Ex = new double[NGridX*NGridY];
+    double *Ey = new double[NGridX*NGridY];
+    double *E = new double[NGridX*NGridY];
 
     for(int i=0; i < NGridX; i++){
-        for(int j=0; j <= NGridY; j++){
-            Ex[i][j] = 0;
-            Ey[i][j] = 0;
-            E[i][j] = 0;
+        for(int j=0; j < NGridY; j++){
+            //qDebug() << i << j;
+            Ex[i*NGridY+j] = 0;
+            Ey[i*NGridY+j] = 0;
+            E[i*NGridY+j] = 0;
         }
     }
 
@@ -56,8 +57,8 @@ void ElectricField::CalculateField()
                         double Rx = i - SceneToGridX(c->scenePos());
                         double Ry = j - SceneToGridY(c->scenePos());
                         double R = std::pow(std::sqrt(Rx*Rx + Ry*Ry),3);
-                        Ex[i][j] += K*c->Q*Rx/R;
-                        Ey[i][j] += K*c->Q*Ry/R;
+                        Ex[i*NGridY+j] += K*c->Q*Rx/R;
+                        Ey[i*NGridY+j] += K*c->Q*Ry/R;
                     }
                 }
             }
@@ -67,7 +68,7 @@ void ElectricField::CalculateField()
     //qDebug() << "Calculate E";
     for(int i=0; i < NGridX; i++){
         for(int j=0; j < NGridY; j++){
-            E[i][j] = std::sqrt(Ex[i][j]*Ex[i][j] + Ey[i][j]*Ey[i][j]);
+            E[i*NGridY+j] = std::sqrt(Ex[i*NGridY+j]*Ex[i*NGridY+j] + Ey[i*NGridY+j]*Ey[i*NGridY+j]);
         }
     }
 
@@ -87,8 +88,8 @@ void ElectricField::CalculateField()
     double Esat = K * Qmax / (1.5*1.5);
     for(int i=0; i < NGridX; i++){
         for(int j=0; j < NGridY; j++){
-            if(E[i][j] > Esat) E[i][j] = Esat;
-            else if(E[i][j] < -Esat) E[i][j] = -Esat;
+            if(E[i*NGridY+j] > Esat) E[i*NGridY+j] = Esat;
+            else if(E[i*NGridY+j] < -Esat) E[i*NGridY+j] = -Esat;
         }
     }
 
@@ -97,7 +98,7 @@ void ElectricField::CalculateField()
         double x = (i*GridW);
         for(int j=0; j < NGridY; j++){
             double y = (j*GridW);
-            double tetha = atan2(Ey[i][j],Ex[i][j]) * 180 / 3.14159265;
+            double tetha = atan2(Ey[i*NGridY+j],Ex[i*NGridY+j]) * 180 / 3.14159265;
             tetha += 90;
             if(tetha < 0) tetha += 360;
             foreach (QGraphicsItem *item, this->items(QRectF(x, y, GridW, GridW))) {
@@ -106,7 +107,7 @@ void ElectricField::CalculateField()
                     arrow->setRotation(tetha);
 
                     QColor color(Qt::white);
-                    double alpha = E[i][j]/Esat;
+                    double alpha = E[i*NGridY+j]/Esat;
 
                     color.setAlphaF(alpha);
                     arrow->setColor(color);
@@ -116,6 +117,9 @@ void ElectricField::CalculateField()
     }
 
     //qDebug() << "Calculate done";
+    delete[] Ex;
+    delete[] Ey;
+    delete[] E;
 }
 
 double ElectricField::SceneToGridX(QPointF pos)
