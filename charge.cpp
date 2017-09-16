@@ -82,6 +82,7 @@ void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void Charge::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+    Q_UNUSED(event);
     //qDebug() << "Mouse release: " << event->scenePos();
     setCursor(Qt::OpenHandCursor);
 }

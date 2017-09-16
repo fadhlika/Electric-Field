@@ -149,7 +149,7 @@ void ElectricField::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 void ElectricField::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 {
     event->setAccepted(true);
-    qDebug() << "Drag move";
+    //qDebug() << "Drag move";
 }
 
 void ElectricField::dropEvent(QGraphicsSceneDragDropEvent *event){
@@ -219,5 +219,4 @@ void ElectricField::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void ElectricField::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsScene::mouseReleaseEvent(event);
-
 }
