@@ -37,5 +37,5 @@ void Arrow::setColor(QColor color_)
 
 int Arrow::type() const
 {
-    return UserType+3;
+    return Type;
 }

@@ -11,6 +11,10 @@ public:
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
+
+    int type() const;
+    enum {Type = UserType + 6};
+
 };
 
 #endif // CONTROL_H

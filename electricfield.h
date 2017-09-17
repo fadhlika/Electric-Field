@@ -3,23 +3,32 @@
 
 #include <QObject>
 #include <QGraphicsSceneDragDropEvent>
+#include <QGraphicsItem>
 #include <QList>
 #include <QRectF>
 #include <QGraphicsScene>
 #include <QVariant>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QTimer>
+#include <math.h>
+
 #include "charge.h"
 #include "arrow.h"
-#include <math.h>
+#include "testcharge.h"
+
 
 class ElectricField : public QGraphicsScene
 {
+
 public:
     ElectricField(QObject *parent = Q_NULLPTR);
     void InitializeField();
     void CalculateField();
-    enum { ChargeNormal = 65537, ChargeConstructor = 65538, ArrowField = 65539};
+    void CalculateForce();
+
+    void StartTest();
+    void StopTest();
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
@@ -31,15 +40,23 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 private:
+    const double K = 8.987552e9;
+    const double mp = 1.6726219e-27;
+    const double me = 9.10938356e-31;
     int NGridX;
     int NGridY;
     int GridW;
-    double x;
-    double y;
-    const double K = 8.987552e9;
     double SceneToGridX(QPointF);
     double SceneToGridY(QPointF);
-    QGraphicsItem *item;
+    double GridToSceneX(QPointF);
+    double GridToSceneY(QPointF);
+
+    TestCharge *testCharge;
+    double Vx, Vy;
+    double x, y;
+    double dt;
+
+    QTimer *timer;
 };
 
 #endif // ELECTRICFIELD_H

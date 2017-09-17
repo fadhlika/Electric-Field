@@ -1,6 +1,6 @@
-#include "charge.h"
+#include "testcharge.h"
 
-Charge::Charge()
+TestCharge::TestCharge()
 {
     setCursor(Qt::OpenHandCursor);
     setAcceptedMouseButtons(Qt::LeftButton|Qt::RightButton);
@@ -9,41 +9,29 @@ Charge::Charge()
     this->setZValue(10);
 }
 
-QRectF Charge::boundingRect() const
+QRectF TestCharge::boundingRect() const
 {
-    return QRectF(-17, -17, 34, 34);
+    return QRectF(-12, -12, 24, 24);
 }
 
-void Charge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void TestCharge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if(Q > 0) color = Qt::red;
-    else color = Qt::blue;
-
     painter->setPen(Qt::NoPen);
-    painter->setBrush(color);
-    painter->drawEllipse(-15, -15, 30, 30);
-
-    painter->setBrush(Qt::white);
-    painter->setPen(QPen(Qt::white, 3));
-
-    if(Q>0)
-    {
-        painter->drawLine(0, -10, 0, 10);
-    }
-
-    painter->drawLine(-10, 0, 10, 0);
+    painter->setBrush(Qt::yellow);
+    painter->drawEllipse(-12, -12, 24, 24);
 }
 
-void Charge::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void TestCharge::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
     setCursor(Qt::ClosedHandCursor);
 }
 
-void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+
+void TestCharge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     //qDebug() << "Mouse move charge: " << event->scenePos();
     if(QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
@@ -57,40 +45,39 @@ void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         QMimeData *mime = new QMimeData;
 
         drag->setMimeData(mime);
-
-        mime->setColorData(color);
         mime->setProperty("Q", this->Q);
+        mime->setProperty("Test", true);
 
-        QPixmap pixmap(30, 30);
+        QPixmap pixmap(24, 24);
         pixmap.fill(Qt::transparent);
 
         QPainter painter(&pixmap);
-        painter.translate(15, 15);
+        painter.translate(12, 12);
         painter.setRenderHint(QPainter::Antialiasing);
         paint(&painter, 0, 0);
         painter.end();
 
         drag->setPixmap(pixmap);
-        drag->setHotSpot(QPoint(15, 15));
+        drag->setHotSpot(QPoint(12, 12));
 
         drag->exec();
         setCursor(Qt::OpenHandCursor);
-    } else {
-        this->setPos(event->scenePos());
     }
 }
 
-void Charge::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void TestCharge::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
     //qDebug() << "Mouse release: " << event->scenePos();
     setCursor(Qt::OpenHandCursor);
 }
 
-int Charge::type() const
+
+int TestCharge::type() const
 {
-    if(isConstructor)
-        return TypeConstructor;
+    if(isConstructor) return TypeConstructor;
 
     return Type;
 }
+
+

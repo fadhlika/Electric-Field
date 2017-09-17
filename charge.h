@@ -23,12 +23,10 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
 
     double Q;
-    double x;
-    double y;
     bool isConstructor;
 
     int type() const;
-    enum { Type = UserType + 1};
+    enum { Type = UserType + 3, TypeConstructor = UserType + 4};
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

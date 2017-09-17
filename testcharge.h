@@ -1,5 +1,5 @@
-#ifndef ARROW_H
-#define ARROW_H
+#ifndef TESTCHARGE_H
+#define TESTCHARGE_H
 
 #include <QApplication>
 #include <QRectF>
@@ -13,25 +13,26 @@
 #include <QCursor>
 #include <QMimeData>
 #include <QGraphicsScene>
-#include <QPainterPath>
-#include <QtMath>
-#include <vector>
-#include <QColor>
 
-class Arrow : public QGraphicsItem
+class TestCharge : public QGraphicsItem
 {
 public:
-    Arrow();
+    TestCharge();
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0) override;
-    void setColor(QColor color_);
+
+    double Q;
+    bool isConstructor;
 
     int type() const;
-    enum {Type = UserType + 5};
+    enum { Type = UserType + 1, TypeConstructor = UserType + 2};
 
-private:
-    QColor color;
+protected:
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
 };
 
-#endif // ARROW_H
+#endif // TESTCHARGE_H

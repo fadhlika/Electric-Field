@@ -32,7 +32,8 @@ SOURCES += \
     electricfield.cpp \
     arrow.cpp \
     electricfieldview.cpp \
-    control.cpp
+    control.cpp \
+    testcharge.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,7 +41,8 @@ HEADERS += \
     electricfield.h \
     arrow.h \
     electricfieldview.h \
-    control.h
+    control.h \
+    testcharge.h
 
 FORMS += \
         mainwindow.ui
