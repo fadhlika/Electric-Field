@@ -11,7 +11,7 @@ TestCharge::TestCharge()
 
 QRectF TestCharge::boundingRect() const
 {
-    return QRectF(-12, -12, 24, 24);
+    return QRectF(-10, -10, 20, 20);
 }
 
 void TestCharge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -21,7 +21,7 @@ void TestCharge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::yellow);
-    painter->drawEllipse(-12, -12, 24, 24);
+    painter->drawEllipse(-10, -10, 20, 20);
 }
 
 void TestCharge::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -48,17 +48,17 @@ void TestCharge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         mime->setProperty("Q", this->Q);
         mime->setProperty("Test", true);
 
-        QPixmap pixmap(24, 24);
+        QPixmap pixmap(20, 20);
         pixmap.fill(Qt::transparent);
 
         QPainter painter(&pixmap);
-        painter.translate(12, 12);
+        painter.translate(10, 10);
         painter.setRenderHint(QPainter::Antialiasing);
         paint(&painter, 0, 0);
         painter.end();
 
         drag->setPixmap(pixmap);
-        drag->setHotSpot(QPoint(12, 12));
+        drag->setHotSpot(QPoint(10, 10));
 
         drag->exec();
         setCursor(Qt::OpenHandCursor);

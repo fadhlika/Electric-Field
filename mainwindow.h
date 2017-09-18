@@ -19,6 +19,7 @@
 #include "control.h"
 #include "testcharge.h"
 #include "settingdialog.h"
+#include "dipolecharge.h"
 
 namespace Ui {
 class MainWindow;

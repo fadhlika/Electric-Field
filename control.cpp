@@ -2,7 +2,7 @@
 
 Control::Control()
 {
-    this->setZValue(5);
+    this->setZValue(12);
 }
 
 QRectF Control::boundingRect() const

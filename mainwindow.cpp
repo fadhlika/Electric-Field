@@ -18,36 +18,44 @@ MainWindow::MainWindow(QWidget *parent) :
 
     charge1 = new Charge;
     charge1->isConstructor = true;
+    charge1->setZValue(15);
     charge1->Q = 1e-6;
     scene->addItem(charge1);
 
     charge2 = new Charge;
     charge2->isConstructor = true;
+    charge2->setZValue(15);
     charge2->Q = -1e-6;
     scene->addItem(charge2);
 
     testCharge = new TestCharge;
     testCharge->isConstructor = true;
+    testCharge->setZValue(15);
     testCharge->Q = 1e-6;
     scene->addItem(testCharge);
 
     pChargeText = new QGraphicsTextItem("+1uC");
-    pChargeText->setZValue(10);
+    pChargeText->setZValue(15);
     pChargeText->setDefaultTextColor(Qt::white);
     pChargeText->setFont(QFont("Arial", 13));
     scene->addItem(pChargeText);
 
     nChargeText = new QGraphicsTextItem("-1uC");
-    nChargeText->setZValue(10);
+    nChargeText->setZValue(15);
     nChargeText->setDefaultTextColor(Qt::white);
     nChargeText->setFont(QFont("Arial", 13));
     scene->addItem(nChargeText);
 
     tChargeText = new QGraphicsTextItem("Test");
-    tChargeText->setZValue(10);
+    tChargeText->setZValue(15);
     tChargeText->setDefaultTextColor(Qt::white);
     tChargeText->setFont(QFont("Arial", 13));
     scene->addItem(tChargeText);
+
+    DipoleCharge *dipole = new DipoleCharge;
+    dipole->setZValue(15);
+    dipole->setPos(100,100);
+    //scene->addItem(dipole);
 
     view = new ElectricFieldView(scene);
     view->setAlignment(Qt::AlignLeft | Qt::AlignTop);

@@ -34,7 +34,8 @@ SOURCES += \
     electricfieldview.cpp \
     control.cpp \
     testcharge.cpp \
-    settingdialog.cpp
+    settingdialog.cpp \
+    dipolecharge.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +45,8 @@ HEADERS += \
     electricfieldview.h \
     control.h \
     testcharge.h \
-    settingdialog.h
+    settingdialog.h \
+    dipolecharge.h
 
 FORMS += \
         mainwindow.ui

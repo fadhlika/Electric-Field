@@ -11,7 +11,7 @@ Charge::Charge()
 
 QRectF Charge::boundingRect() const
 {
-    return QRectF(-17, -17, 34, 34);
+    return QRectF(-10, -10, 20, 20);
 }
 
 void Charge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -24,17 +24,17 @@ void Charge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(color);
-    painter->drawEllipse(-15, -15, 30, 30);
+    painter->drawEllipse(-10, -10, 20, 20);
 
     painter->setBrush(Qt::white);
     painter->setPen(QPen(Qt::white, 3));
 
     if(Q>0)
     {
-        painter->drawLine(0, -10, 0, 10);
+        painter->drawLine(0, -5, 0, 5);
     }
 
-    painter->drawLine(-10, 0, 10, 0);
+    painter->drawLine(-5, 0, 5, 0);
 }
 
 void Charge::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -61,17 +61,17 @@ void Charge::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         mime->setColorData(color);
         mime->setProperty("Q", this->Q);
 
-        QPixmap pixmap(30, 30);
+        QPixmap pixmap(20, 20);
         pixmap.fill(Qt::transparent);
 
         QPainter painter(&pixmap);
-        painter.translate(15, 15);
+        painter.translate(10, 10);
         painter.setRenderHint(QPainter::Antialiasing);
         paint(&painter, 0, 0);
         painter.end();
 
         drag->setPixmap(pixmap);
-        drag->setHotSpot(QPoint(15, 15));
+        drag->setHotSpot(QPoint(10, 10));
 
         drag->exec();
         setCursor(Qt::OpenHandCursor);
