@@ -33,7 +33,8 @@ SOURCES += \
     arrow.cpp \
     electricfieldview.cpp \
     control.cpp \
-    testcharge.cpp
+    testcharge.cpp \
+    settingdialog.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -42,7 +43,11 @@ HEADERS += \
     arrow.h \
     electricfieldview.h \
     control.h \
-    testcharge.h
+    testcharge.h \
+    settingdialog.h
 
 FORMS += \
         mainwindow.ui
+
+RESOURCES += \
+    icons.qrc

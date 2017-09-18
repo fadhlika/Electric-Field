@@ -29,6 +29,11 @@ public:
 
     void StartTest();
     void StopTest();
+    void Reset();
+
+    void setParameters(double deltat, double mass, double charge);
+    double interval();
+    double chargeMass();
 
 protected:
     void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
@@ -52,9 +57,10 @@ private:
     double GridToSceneY(QPointF);
 
     TestCharge *testCharge;
+    double dt;
+    double chargeTestMass;
     double Vx, Vy;
     double x, y;
-    double dt;
 
     QTimer *timer;
 };

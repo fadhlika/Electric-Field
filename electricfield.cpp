@@ -8,13 +8,34 @@ ElectricField::ElectricField(QObject *parent): QGraphicsScene(parent)
 
     Vx = 0;
     Vy = 0;
-    y = 0;
-    x = 0;
-    dt = 0.1;
+    dt = 0.01;
+
+    chargeTestMass = 1e-5;
 
     timer = new QTimer;
     timer->setInterval(10);
     connect(timer, &QTimer::timeout, this, &ElectricField::CalculateForce);
+}
+
+void ElectricField::setParameters(double deltat, double mass, double charge)
+{
+    dt = deltat;
+    chargeTestMass = mass;
+    if(testCharge != Q_NULLPTR)
+    {
+        testCharge->Q = charge;
+    }
+    this->CalculateField();
+}
+
+double ElectricField::interval()
+{
+    return dt;
+}
+
+double ElectricField::chargeMass()
+{
+    return chargeTestMass;
 }
 
 void ElectricField::StartTest()
@@ -25,6 +46,25 @@ void ElectricField::StartTest()
 void ElectricField::StopTest()
 {
     timer->stop();
+    Vx = 0;
+    Vy = 0;
+}
+
+void ElectricField::Reset()
+{
+    foreach (QGraphicsItem *item, this->items()) {
+        if(item->type() == Charge::Type){
+            this->removeItem(item);
+            delete item;
+        } else if(item->type() == TestCharge::Type){
+            this->removeItem(item);
+            testCharge = Q_NULLPTR;
+        } else if(item->type() == Arrow::Type){
+            item->setRotation(0);
+            item->hide();
+        }
+
+    }
 }
 
 void ElectricField::InitializeField()
@@ -175,13 +215,13 @@ void ElectricField::CalculateForce()
         }
     }
 
-    double ax = Fx / 1e-5; //(testCharge->Q > 0 ? mp : me);
-    double ay = Fy / 1e-5; //(testCharge->Q > 0 ? mp : me);
+    double ax = Fx / chargeTestMass; //(testCharge->Q > 0 ? mp : me);
+    double ay = Fy / chargeTestMass; //(testCharge->Q > 0 ? mp : me);
     Vx += ax*dt;
     Vy += ay*dt;
     double xi = SceneToGridX(testCharge->scenePos()) + Vx*dt;
     double yi = SceneToGridY(testCharge->scenePos()) + Vy*dt;
-    qDebug() << xi  << yi << GridToSceneX(QPointF(xi, yi)) << GridToSceneY(QPointF(xi, yi));
+    //qDebug() << xi  << yi << GridToSceneX(QPointF(xi, yi)) << GridToSceneY(QPointF(xi, yi));
     if(GridToSceneX(QPointF(xi, yi)) > this->width()) {
         xi = SceneToGridX(QPoint(this->width(), yi));
         timer->stop();
@@ -189,19 +229,31 @@ void ElectricField::CalculateForce()
     if(GridToSceneX(QPointF(xi, yi)) < 20)
     {
         xi = SceneToGridX(QPoint(20, yi));
-        timer->stop();
+        StopTest();
     }
-    if(GridToSceneY(QPointF(xi, yi)) > this->height()) {
-        yi = SceneToGridY(QPoint(xi, this->height()));
-        timer->stop();
+    if(GridToSceneY(QPointF(xi, yi)) > this->height() - 20) {
+        yi = SceneToGridY(QPoint(xi, this->height() - 20));
+        StopTest();
     }
     if(GridToSceneY(QPointF(xi, yi)) < 20) {
         yi = SceneToGridY(QPoint(xi, 20));
-        timer->stop();
+        StopTest();
     }
 
     QPointF pos(GridToSceneX(QPointF(xi, yi)), GridToSceneY(QPointF(xi, yi)));
     testCharge->setPos(pos);
+    this->CalculateField();
+
+    foreach(QGraphicsItem *item, this->items())
+    {
+        if(item->type() == Charge::Type)
+        {
+            if(testCharge->collidesWithItem(item)){
+                this->StopTest();
+                qDebug() << "Collide";
+            }
+        }
+    }
 
 }
 
@@ -307,6 +359,8 @@ void ElectricField::mousePressEvent(QGraphicsSceneMouseEvent *event)
             this->removeItem(tCharge);
             delete tCharge;
             testCharge = Q_NULLPTR;
+            Vx = 0;
+            Vy = 0;
             this->CalculateField();
         }
 

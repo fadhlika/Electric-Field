@@ -7,30 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QMenu *fileMenu = new QMenu;
-    fileMenu->setTitle("File");
-
-
-    QMenu *playbackMenu = new QMenu;
-    playbackMenu->setTitle("Playback");
-
-    QAction *playAction = new QAction;
-    playAction->setText("Play");
-    playbackMenu->addAction(playAction);
-    connect(playAction, &QAction::triggered, this, &MainWindow::StartTest);
-
-    QAction *stopAction = new QAction;
-    stopAction->setText("Stop");
-    playbackMenu->addAction(stopAction);
-    connect(stopAction, &QAction::triggered, this, &MainWindow::StopTest);
-
-    QAction *playbackSettingAction = new QAction;
-    playbackSettingAction->setText("Setting");
-    playbackMenu->addAction(playbackSettingAction);
-
-    //ui->menuBar->addMenu(fileMenu);
-    ui->menuBar->addMenu(playbackMenu);
-
     this->resize(800, 600);
     this->setWindowTitle("Medan Listrik");
 
@@ -80,8 +56,53 @@ MainWindow::MainWindow(QWidget *parent) :
     view->setGeometry(this->rect());
     scene->setSceneRect(view->rect());
 
+    double dt = scene->interval(), mass = scene->chargeMass(), charge = testCharge->Q;
+
+    dialog = new SettingDialog(&dt, &mass, &charge, this);
+    connect(dialog, &SettingDialog::settingAccepted, this, &MainWindow::setSetting);
+
+    QMenu *fileMenu = new QMenu;
+    fileMenu->setTitle("File");
+
+    QMenu *playbackMenu = new QMenu;
+    playbackMenu->setTitle("Playback");
+
+    QAction *playAction = new QAction;
+    playAction->setText("Play");
+    playAction->setIcon(QIcon(":/play.svg"));
+    connect(playAction, &QAction::triggered, this, &MainWindow::StartTest);
+
+    QAction *stopAction = new QAction;
+    stopAction->setText("Stop");
+    stopAction->setIcon(QIcon(":/stop.svg"));
+    connect(stopAction, &QAction::triggered, this, &MainWindow::StopTest);
+
+    QAction *resetAction = new QAction;
+    resetAction->setText("Stop");
+    resetAction->setIcon(QIcon(":/replay.svg"));
+    connect(resetAction, &QAction::triggered, this, &MainWindow::Reset);
+
+    QAction *settingAction = new QAction;
+    settingAction->setText("Setting");
+    settingAction->setIcon(QIcon(":/settings.svg"));
+    connect(settingAction, &QAction::triggered, dialog, &SettingDialog::exec);
+
+    ui->menuBar->addMenu(fileMenu);
+
+    ui->toolBar->addAction(resetAction);
+    ui->toolBar->addAction(playAction);
+    ui->toolBar->addAction(stopAction);
+    ui->toolBar->addAction(settingAction);
+
     this->setCentralWidget(view);
     scene->InitializeField();
+}
+
+void MainWindow::setSetting(double dt, double mass, double charge)
+{
+    this->scene->setParameters(dt, mass, charge);
+
+    qDebug() << "Setting set";
 }
 
 void MainWindow::StartTest()
@@ -94,6 +115,11 @@ void MainWindow::StopTest()
     scene->StopTest();
 }
 
+void MainWindow::Reset()
+{
+    scene->Reset();
+}
+
 void MainWindow::resizeEvent(QResizeEvent *event)
 {
    Q_UNUSED(event);
@@ -104,14 +130,14 @@ void MainWindow::resizeEvent(QResizeEvent *event)
    double w = (this->width()/2);
    double h = this->height();
 
-   charge1->setPos(w - 60, h - 70);
-   charge2->setPos(w, h - 70);
-   testCharge->setPos(w + 60, h - 70);
-   control->setPos(w, h - 60);
+   charge1->setPos(w - 60, h - 110);
+   charge2->setPos(w, h - 110);
+   testCharge->setPos(w + 60, h - 110);
+   control->setPos(w, h - 100);
 
-   pChargeText->setPos(w - 85, h - 50);
-   nChargeText->setPos(w - 25, h - 50);
-   tChargeText->setPos(w + 40, h - 50);
+   pChargeText->setPos(w - 85, h - 90);
+   nChargeText->setPos(w - 25, h - 90);
+   tChargeText->setPos(w + 40, h - 90);
 
    qDebug() << "Control pos" << control->boundingRect();
    qDebug() << "Scene size: " << scene->width() << scene->height();

@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>play.svg</file>
+        <file>replay.svg</file>
+        <file>stop.svg</file>
+        <file>settings.svg</file>
+    </qresource>
+</RCC>

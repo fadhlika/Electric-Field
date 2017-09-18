@@ -10,6 +10,7 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
+#include <QDialog>
 
 #include "charge.h"
 #include "electricfield.h"
@@ -17,6 +18,7 @@
 #include "arrow.h"
 #include "control.h"
 #include "testcharge.h"
+#include "settingdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +35,10 @@ public:
     void resizeEvent(QResizeEvent *event);
     void StartTest();
     void StopTest();
+    void Reset();
+
+    void ShowSettingDialog();
+    void setSetting(double dt, double mass, double charge);
 
 private:
     Ui::MainWindow *ui;
@@ -49,6 +55,8 @@ private:
     QGraphicsTextItem *pChargeText;
     QGraphicsTextItem *nChargeText;
     QGraphicsTextItem *tChargeText;
+
+    SettingDialog *dialog;
 };
 
 #endif // MAINWINDOW_H
